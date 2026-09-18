@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" content="#25392e" /><meta name="description" content="Explore a reference-led, interactive 3D reconstruction of Tinkerspace Calicut." /><title>Tinkerspace Calicut — Explore the space</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect rx='15' width='64' height='64' fill='%232a4033'/%3E%3Cpath d='M16 20h32v8H36v22h-8V28H16z' fill='%23d5eea5'/%3E%3C/svg%3E" /></head>
+<body>
+  <canvas id="world" aria-label="Interactive 3D Tinkerspace environment" tabindex="0"></canvas>
+  <div id="fatal" hidden role="alert"></div>
+  <header class="site-header">
+    <a class="brand" href="#" id="home" aria-label="Tinkerspace home"><svg width="30" height="30" viewBox="0 0 30 30" fill="none"><path d="M2 2h11v11H2zm15 0h11v11H17zM2 17h11v11H2z" fill="currentColor"/><path d="M17 17h11v11H17z" stroke="currentColor" stroke-width="2"/></svg><span>TINKERSPACE<small>CALICUT</small></span></a>
+    <div class="header-actions"><span class="edition">A SPACE FOR POSSIBILITY</span><button class="plain-button" id="map-button" aria-label="Open floor plan">Floor plan <span>↗</span></button><button class="round-button" id="menu-button" aria-label="Pause exploration" hidden>Ⅱ</button></div>
+  </header>
+  <main id="landing">
+    <div class="landing-gradient"></div>
+    <div class="intro">
+      <div class="eyebrow"><span class="live-dot"></span> A PLACE TO MAKE THINGS</div>
+      <h1>Room for<br/><em>curiosity.</em></h1>
+      <p>A workshop under a clay-tiled roof.<br/>A veranda among the trees.<br/>Come in. Take a look around.</p>
+      <button class="enter-button" id="enter">Enter the building <span>↗</span></button>
+      <div class="entry-note">An interactive reconstruction of Tinkerspace Calicut</div>
+    </div>
+    <div class="scene-caption"><span class="caption-rule"></span><div>One connected place<small>WORKSHOP · VERANDA · GARDEN</small></div></div>
+    <footer class="landing-footer"><span>BUILT FOR EXPLORATION</span><button id="guide-button">How to explore <span>↓</span></button><span class="version">FIRST PLAYABLE / 01</span></footer>
+  </main>
+  <div id="hud" hidden>
+    <div class="location"><span class="live-dot"></span><span id="location-label">Uphill approach</span><span class="location-divider"></span><span class="location-mode">FREE EXPLORATION</span></div>
+    <div id="crosshair"><i></i></div>
+    <div id="interaction-prompt" hidden><span class="keycap">E</span><div><strong id="object-label"></strong><span id="object-action"></span></div></div>
+    <div class="controls-strip"><span><kbd>W A S D</kbd> Move</span><span><kbd>Mouse</kbd> Look</span><span><kbd>E</kbd> Interact</span><span><kbd>Shift</kbd> Sprint</span><span><kbd>Space</kbd> Jump</span><span><kbd>M</kbd> Plan</span><span><kbd>Esc</kbd> Pause</span></div>
+    <aside id="inspector" hidden><button id="close-inspector" aria-label="Close object details">×</button><span id="inspect-category" class="eyebrow"></span><h3 id="inspect-title"></h3><span id="inspect-state"></span><p id="inspect-detail"></p></aside>
+  </div>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <div class="modal-shell" id="pause-modal" hidden>
+    <section class="pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title"><span class="eyebrow">TAKE YOUR TIME</span><h2 id="pause-title">Keep exploring.</h2><p>There’s no set route. Follow the veranda, step into the workshop, or head down to the garden.</p><button class="enter-button" id="resume">Return to the space <span>↗</span></button><div class="viewpoint-grid"><button data-view="workshop">Workshop <span>01</span></button><button data-view="veranda">Veranda <span>02</span></button><button data-view="garden">Garden <span>03</span></button><button data-view="arrival">Entrance <span>04</span></button><button data-view="annex">First-floor annex <span>05</span></button></div><div class="pause-options"><label>Visual quality <select id="quality"><option value="high">High</option><option value="balanced" selected>Balanced</option><option value="low">Low</option></select></label><button class="text-button" id="reset">Reset visit</button></div><p class="small-note">Use E on highlighted objects. R rotates a chair. Your visit changes only this browser session.</p></section>
+  </div>
+  <div class="modal-shell" id="map-modal" hidden>
+    <section class="map-card" role="dialog" aria-modal="true" aria-labelledby="map-title"><button class="close-button" id="close-map" aria-label="Close floor plan">×</button><div class="map-heading"><div><span class="eyebrow">FIND YOUR WAY</span><h2 id="map-title">The corrected first floor.</h2></div><span class="map-badge">PLAN DIMENSIONS<br/>5.80 × 14.60 M</span></div><div class="map-content"><div id="map-drawing"></div><div class="map-copy"><div class="map-item"><span>01</span><div><h3>The workshop</h3><p>The main room follows your plan: three central tables, the long left-wall bench, and a smaller window table. Chairs face their table in straight rows.</p></div></div><div class="map-item"><span>02</span><div><h3>The annex</h3><p>Bathroom and Other 1 connect to two separate upper rooms, Other 2 and Other 3, through the openings shown on your plan.</p></div></div><div class="map-item"><span>03</span><div><h3>The connections</h3><p>Two right-side workshop doors lead to the veranda. The stepped landing joins the annex to that same passage.</p></div></div><details><summary>About the reconstruction</summary><p>Your floor plan supersedes the earlier room proportions and partitions. The 5.80 m width and 14.60 m right-side length are used; the left label reads 14.46 m. Unlabelled openings are traced estimates. Roof, veranda and grounds retain the photo-based reconstruction.</p><p>No people appear in this reconstruction.</p></details></div></div></section>
+  </div>
+  <div class="modal-shell" id="guide-modal" hidden>
+    <section class="pause-card" role="dialog" aria-modal="true" aria-labelledby="guide-title"><button class="close-button" id="close-guide" aria-label="Close instructions">×</button><span class="eyebrow">MAKE YOURSELF AT HOME</span><h2 id="guide-title">Follow your curiosity.</h2><p>Use a keyboard and mouse to explore. Click Enter to capture the mouse; Escape releases it.</p><dl class="guide-controls"><dt>W A S D</dt><dd>Walk through the space</dd><dt>Mouse</dt><dd>Look around</dd><dt>E</dt><dd>Use the highlighted object</dd><dt>R</dt><dd>Rotate a highlighted chair</dd><dt>Shift / Space</dt><dd>Sprint / jump</dd><dt>M / Esc</dt><dd>Floor plan / pause</dd></dl><p class="small-note">If mouse capture is unavailable, hold the left mouse button and drag to look. The pause menu includes quick access to each area.</p><button class="enter-button" id="guide-enter">Enter the building <span>↗</span></button></section>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
