@@ -14,11 +14,11 @@ const fs=require('fs');
   ['workshop',[-.95,3.2,5.7],0,0],
   ['printers',[-.95,3.2,-5.5],Math.PI,0],
   ['veranda',[3.75,3.2,-5.7],Math.PI,.05],
-  ['stairs',[5.65,3.2,-4.1],Math.PI,-.55],
-  ['entry',[3.8,3.2,-11.2],Math.PI,0],
-  ['annex',[.6,3.2,-9.3],0,0],
+  ['stairs',[5.767,3.75,-6.75],Math.PI,-.55],
+  ['entry',[3.8,3.75,-14.3],Math.PI,0],
+  ['annex',[.6,3.75,-9.7],0,0],
  ]){
-  await page.evaluate(({pos,yaw,pitch})=>{const t=__twin;t.ui.started=true;t.ui.setExploring(true);document.getElementById('pause-modal').hidden=true;t.player.active=false;t.player.position.set(...pos);t.player.yaw=yaw;t.player.pitch=pitch;t.player.syncCamera()}, {pos,yaw,pitch});
+  await page.evaluate(({pos,yaw,pitch})=>{const t=__twin;t.ui.started=true;t.ui.setExploring(true);document.getElementById('pause-modal').hidden=true;t.player.active=false;t.player.position.set(pos[0],t.config.building.room.floorY,pos[2]);t.player.yaw=yaw;t.player.pitch=pitch;t.player.syncCamera()}, {pos,yaw,pitch});
   await page.waitForTimeout(250); await page.screenshot({path:`artifacts/${name}.png`});
  }
  await page.click('#map-button');await page.screenshot({path:'artifacts/map.png'});

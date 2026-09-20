@@ -1,7 +1,7 @@
 import { sceneConfig } from '../config/scene-config.js';
 export function terrainHeight(x, z) {
   // Upper path reaches workshop grade; lower parking sits below the veranda.
-  return Math.max(0, Math.min(sceneConfig.building.room.floorY, (-z + 7) / 17 * sceneConfig.building.room.floorY));
+  return Math.max(0, Math.min(sceneConfig.building.room.floorY, (7 - z) / (7 - sceneConfig.plan.lobby.minZ) * sceneConfig.building.room.floorY));
 }
 export function baseGroundHeight(x, z) {
   const b = sceneConfig.building;

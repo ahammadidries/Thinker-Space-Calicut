@@ -27,8 +27,8 @@ export class InteractionManager {
       break;
     }
     this.target = target;
-    this.outline.visible = !!target;
-    if (target) this.outline.box.setFromObject(target.group).expandByScalar(.015);
+    this.outline.visible = !!target && target.highlight !== false;
+    if (this.outline.visible) this.outline.box.setFromObject(target.group).expandByScalar(.015);
     this.ui.prompt(target);
   }
   act(player, action = 'primary') {
@@ -36,6 +36,6 @@ export class InteractionManager {
     const item = this.target;
     const message = action === 'rotate' ? item.rotate?.(player) : item.interact?.(player);
     if (message) this.ui.toast(message);
-    this.ui.inspect(item);
+    if (item.inspect !== false) this.ui.inspect(item);
   }
 }

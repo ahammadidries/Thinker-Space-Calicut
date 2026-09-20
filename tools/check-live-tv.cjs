@@ -1,0 +1,54 @@
+const {chromium}=require('C:/Users/ahamm/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const fs=require('node:fs');
+(async()=>{
+ const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--enable-webgl','--ignore-gpu-blocklist','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+ try {
+  const page=await browser.newPage({viewport:{width:1440,height:1000}}), errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  const url='https://jasimcm.github.io/tinkerspace_digital_calicut/';
+  let version='original',checks=0;
+  await page.route(url+'?_tv_check=*',route=>{checks++;return route.fulfill({contentType:'text/html',headers:{'access-control-allow-origin':'*'},body:version})});
+  await page.goto('http://127.0.0.1:5186/');await page.waitForFunction(()=>window.__twin?.ready);
+  if(await page.locator('#workshop-live-tv').getAttribute('src')!==url)throw Error('TV must use the supplied URL');
+  await page.evaluate(()=>{const t=__twin;t.ui.started=true;t.ui.setExploring(true);document.getElementById('pause-modal').hidden=true;t.player.active=false;t.player.position.set(0,t.config.building.room.floorY,-4.6);t.player.yaw=0;t.player.pitch=.1;t.player.syncCamera()});
+  const embedded=await page.waitForEvent('framenavigated',{predicate:f=>f.url().startsWith(url),timeout:15000}).catch(()=>page.frames().find(f=>f.url().startsWith(url)));
+  if(!embedded)throw Error('Live site did not load inside TV');
+  await embedded.waitForSelector('#root > *',{timeout:30000});
+  await page.evaluate(()=>__twin.interaction.items.get('display-01').interact());
+  await page.frameLocator('#workshop-live-tv').getByText('Press any button to enter fullscreen',{exact:true}).waitFor({timeout:20000});
+  await page.waitForTimeout(1000);
+  await page.frameLocator('#workshop-live-tv').getByText('Press any button to enter fullscreen',{exact:true}).click();
+  await page.keyboard.press('Enter');
+  await embedded.waitForFunction(()=>!document.body.innerText.includes('Press any button to enter fullscreen'),{},{timeout:15000});
+  await embedded.waitForFunction(()=>{const cover=[...document.querySelectorAll('div')].find(el=>el.classList.contains('z-40'));return cover&&getComputedStyle(cover).opacity==='0'},{},{timeout:45000});
+  await page.waitForTimeout(1500);
+  await page.screenshot({path:'artifacts/live-tv.png'});
+  console.log('Live iframe title:',await embedded.title());
+  await page.getByRole('button',{name:'Back to exploration',exact:true}).click();
+  await page.evaluate(()=>{__twin.player.pause();document.getElementById('pause-modal').hidden=true});
+  await page.waitForTimeout(1000);
+  await page.evaluate(()=>document.getElementById('pause-modal').hidden=true);
+  await page.screenshot({path:'artifacts/live-tv-wall.png'});
+  if(await embedded.locator('body').innerText().then(s=>s.includes('Press any button to enter fullscreen')))throw Error('Returning to room restarted the live page');
+  await page.evaluate(()=>{__twin.config.objects.display.refreshIntervalMs=100});
+  for(let n=0;n<30&&checks<2;n++)await page.waitForTimeout(250);
+  if(checks<2||await page.locator('#workshop-live-tv').getAttribute('src')!==url)throw Error('Unchanged source should not reload the TV: '+checks+' checks; '+await page.locator('#workshop-live-tv').getAttribute('src'));
+  // Mock only the refresh response to prove newly served content replaces the open page.
+  let reloads=0;
+  await page.route(url+'?_tv_refresh=*',route=>{reloads++;return route.fulfill({contentType:'text/html',body:'<body style="background:#aaff88">UPDATED LIVE TV</body>'})});
+  version='updated';
+  await page.evaluate(()=>{__twin.config.objects.display.refreshIntervalMs=1});
+  await page.waitForFunction(()=>document.querySelector('#workshop-live-tv').src.includes('_tv_refresh='));
+  await page.evaluate(()=>{__twin.config.objects.display.refreshIntervalMs=60000});
+  await page.frameLocator('#workshop-live-tv').getByText('UPDATED LIVE TV').waitFor();
+  await page.evaluate(()=>__twin.interaction.items.get('display-01').rotate());
+  await page.waitForFunction(()=>document.querySelector('#workshop-live-tv').style.display==='none');
+  const off=await page.evaluate(()=>__twin.scene.getObjectByName('live-tv-screen').material.opacity===1);
+  if(!off)throw Error('TV did not turn black when off');
+  await page.evaluate(()=>__twin.interaction.items.get('display-01').rotate());
+  await page.waitForFunction(()=>document.querySelector('#workshop-live-tv').style.display!=='none');
+  if(errors.length)throw Error(errors.join('\n'));
+  fs.writeFileSync('artifacts/live-tv-check.json',JSON.stringify({url,livePageLoaded:true,refreshReplacesContent:reloads>0,powerToggle:true,errors},null,2));
+  console.log(JSON.stringify({livePageLoaded:true,refreshReplacesContent:reloads>0,powerToggle:true,errors}));
+ } finally {await browser.close()}
+})().catch(e=>{console.error(e);process.exitCode=1});

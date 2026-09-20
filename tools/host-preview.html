@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Space Host · Asset review</title><style>
+body{margin:0;background:#a7b2ac;color:#213a30;font:16px system-ui}canvas{display:block}header{position:absolute;top:30px;left:40px}h1{margin:0;font-size:24px}p{margin:8px 0;opacity:.75}.labels{position:absolute;bottom:30px;left:0;right:0;display:flex;justify-content:space-around;font:12px system-ui;letter-spacing:2px}
+</style></head><body><header><h1>SPACE HOST</h1><p>Reference-informed sculpt · Forest green · Permanent standing assistant</p></header><div class="labels"><span>FRONT</span><span>THREE-QUARTER</span><span>PROFILE</span><span>FACE DETAIL</span></div><script type="module">
+import * as THREE from '/node_modules/three/build/three.module.js';
+import {GLTFLoader} from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import {clone} from '/node_modules/three/examples/jsm/utils/SkeletonUtils.js';
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;document.body.append(renderer.domElement);
+renderer.setClearColor('#a7b2ac');const gltf=await new GLTFLoader().loadAsync('/models/space-host.glb');const mixers=[],views=[];
+for(let i=0;i<4;i++){
+ const scene=new THREE.Scene();scene.background=new THREE.Color('#a7b2ac');
+ const camera=new THREE.PerspectiveCamera(32,(innerWidth/4)/(innerHeight-190),.01,50);
+ camera.position.set(0,i===3?1.625:1.12,i===3?.85:4.35);camera.lookAt(0,i===3?1.62:.96,0);
+ scene.add(new THREE.HemisphereLight('#ffffff','#68756b',2.4));const light=new THREE.DirectionalLight('#fff4e8',3.1);light.position.set(-3,5,5);scene.add(light);const fill=new THREE.DirectionalLight('#dae8f4',1);fill.position.set(4,2,-1);scene.add(fill);
+ const model=clone(gltf.scene);model.rotation.y=[0,-.6,-Math.PI/2,-.12][i];scene.add(model);const mixer=new THREE.AnimationMixer(model);mixer.clipAction(gltf.animations.find(c=>c.name==='Idle')).play();mixer.update(.3);mixers.push(mixer);views.push({scene,camera});
+}
+window.hostPreview={renderer,gltf,mixers,views};renderer.setAnimationLoop(()=>{renderer.setScissorTest(false);renderer.clear();renderer.setScissorTest(true);views.forEach(({scene,camera},i)=>{renderer.setViewport(i*innerWidth/4,65,innerWidth/4,innerHeight-190);renderer.setScissor(i*innerWidth/4,65,innerWidth/4,innerHeight-190);renderer.render(scene,camera);});});
+</script></body></html>

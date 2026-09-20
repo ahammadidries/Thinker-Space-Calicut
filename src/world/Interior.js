@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { sceneConfig } from '../config/scene-config.js';
-import { makeDisplayTexture, makeTinkerspaceBoardTexture } from './materials.js';
+import { makeTinkerspaceBoardTexture } from './materials.js';
+import { makeLiveDisplay } from '../objects/LiveDisplay.js';
 import { box, beam, group, cylinder } from './primitives.js';
 import { makeTable, makeChair, makeCabinet, makeShelf, makeLaptop, makePrinter, makeFan } from '../objects/Furniture.js';
 import { addDoor } from '../objects/Door.js';
@@ -31,12 +32,13 @@ export function buildInterior(parent, m, registry, collision) {
     const updateCollider = () => { collider.minX = g.position.x - .32; collider.maxX = g.position.x + .32; collider.minZ = g.position.z - .32; collider.maxZ = g.position.z + .32; };
     const item = registry.add({ id: cfg.id, group: g, category: 'Furniture', label: 'Mesh chair', state: 'Aligned to plan', action: 'Move chair · R rotate', detail: 'Starts aligned with its table or wall group. Move in small steps or rotate, within 0.9 m of the starting position.',
       interact(player) {
+        if(g.userData.occupiedBy)return 'This chair is reserved by a maker.';
         const dir = new THREE.Vector3().subVectors(g.position, player.position); dir.y = 0; dir.normalize();
         const pos = g.position.clone().addScaledVector(dir, .2);
         if (pos.distanceTo(start) > .9 || collision.overlaps(pos.x, pos.z, pos.y, .36, .98, cfg.id) || Math.abs(collision.ground(pos.x, pos.z, pos.y) - pos.y) > .08) return 'This chair cannot move farther in that direction.';
         g.position.copy(pos); updateCollider(); item.state = 'Moved'; return 'Chair moved 20 cm';
       },
-      rotate() { if (collision.overlaps(g.position.x, g.position.z, g.position.y, .38, .98, cfg.id)) return 'There is not enough room to rotate this chair.'; g.rotation.y += Math.PI / 8; item.state = 'Rotated'; return 'Chair rotated'; },
+      rotate() { if(g.userData.occupiedBy)return 'This chair is reserved by a maker.'; if (collision.overlaps(g.position.x, g.position.z, g.position.y, .38, .98, cfg.id)) return 'There is not enough room to rotate this chair.'; g.rotation.y += Math.PI / 8; item.state = 'Rotated'; return 'Chair rotated'; },
     });
   }
   const benchCfg = c.objects.workbench, bench = group(parent, benchCfg.position, 0, benchCfg.id);
@@ -55,11 +57,11 @@ export function buildInterior(parent, m, registry, collision) {
   }
   const shelfCfg = c.objects.shelf, shelf = makeShelf(parent, m, shelfCfg);
   registerSolid(shelfCfg, shelf, [.48, 2.56, 1.4], 'Open wooden shelf', 'One shelf at the printer-end doorway. The network cabinet is above the same corner.');
-  const cabCfg = c.objects.windowCabinet, cabinet = makeCabinet(parent, m, cabCfg, 1.5);
-  registerSolid(cabCfg, cabinet.group, [.58, .85, 1.55], 'Window cabinet', 'Low wooden cabinet below the display-end windows.');
+  const cabCfg = c.objects.windowCabinet, cabinet = makeCabinet(parent, m, cabCfg);
+  registerSolid(cabCfg, cabinet.group, [cabCfg.depth, cabCfg.height, cabCfg.width], 'Three-door cabinet table', 'The red-marked table beneath the TV-end windows has one continuous worktop and three cupboard doors. The printer workbench is at the opposite end.');
   const cabItem = registry.items.get(cabCfg.id); let cabinetOpen = false;
   const cabinetBounds = new THREE.Box3();
-  for (const panel of cabinet.panels) panel.collider = collision.box(`${cabCfg.id}-panel-${panel.side}`, [.01, .01, .01], [0, -10, 0]);
+  for (const panel of cabinet.panels) panel.collider = collision.box(`${cabCfg.id}-panel-${panel.index}`, [.01, .01, .01], [0, -10, 0]);
   cabItem.action = 'Open cabinet';
   cabItem.interact = player => { if (Math.hypot(player.position.x - cabCfg.position[0], player.position.z - cabCfg.position[2]) < 1.2) return 'Step back to open the cabinet.'; cabinetOpen = !cabinetOpen; cabItem.state = cabinetOpen ? 'Open' : 'Closed'; cabItem.action = cabinetOpen ? 'Close cabinet' : 'Open cabinet'; return `Cabinet ${cabItem.state.toLowerCase()}`; };
   cabItem.update = (dt, player) => {
@@ -74,18 +76,19 @@ export function buildInterior(parent, m, registry, collision) {
   };
   const tvCfg = c.objects.display, tv = group(parent, tvCfg.position, tvCfg.rotationY, tvCfg.id);
   box(tv, m.black, [1.67, .97, .075]);
-  const screenMat = new THREE.MeshBasicMaterial({ map: makeDisplayTexture() });
-  const screen = box(tv, screenMat, [1.6, .9, .008], [0, 0, .045]);
+  const screen = makeLiveDisplay(tv, tvCfg);
   beam(tv, m.black, [0, -.49, 0], [.05, -.99, -.02], .007);
-  const tvItem = registry.add({ id: tvCfg.id, group: tv, category: 'Display', label: 'Workshop display', state: 'On', action: 'Turn off display', detail: 'The single wall display faces the printer workbench across the workshop.',
-    interact() { const on = tvItem.state !== 'On'; tvItem.state = on ? 'On' : 'Off'; screen.visible = on; tvItem.action = on ? 'Turn off display' : 'Turn on display'; return `Display ${on ? 'on' : 'off'}`; },
+  const tvItem = registry.add({ id: tvCfg.id, group: tv, category: 'Display', label: 'Workshop live display', state: 'On', action: 'View live screen · R power', detail: 'Live website from jasimcm.github.io/tinkerspace_digital_calicut/. Press E to view and click the screen if the website asks to start. Live data updates automatically; new website versions are checked every minute.',
+    interact() { if (tvItem.state === 'Off') tvItem.rotate(); window.dispatchEvent(new Event('view-live-tv')); return 'Click the TV to activate the website if prompted.'; },
+    rotate() { const on = tvItem.state !== 'On'; tvItem.state = on ? 'On' : 'Off'; screen.setPowered(on); return `Display ${on ? 'on' : 'off'}`; },
+    update() { screen.update(); },
   });
   const signCfg = c.objects.entranceSign, sign = group(parent, signCfg.position, signCfg.rotationY, signCfg.id);
   box(sign, m.wood, [signCfg.width, signCfg.height, .04]);
   const signFace = new THREE.Mesh(new THREE.PlaneGeometry(signCfg.width - .07, signCfg.height - .07), new THREE.MeshBasicMaterial({ map: makeTinkerspaceBoardTexture(), side: THREE.DoubleSide }));
   signFace.position.z = -.023; signFace.rotation.y = Math.PI; sign.add(signFace);
   for (const x of [-1, 1]) for (const y of [-1, 1]) box(sign, m.silver, [.052, .052, .025], [x * (signCfg.width / 2 - .07), y * (signCfg.height / 2 - .07), -.035]);
-  registry.add({ id: signCfg.id, group: sign, category: 'Identity', label: 'Tinkerspace Calicut board', state: 'Mounted', action: 'Inspect board', detail: 'OSB identity board added from the supplied reference and mounted on the approach-facing landing wall.', interact: () => 'TINKERSPACE CALICUT' });
+  registry.add({ id: signCfg.id, group: sign, category: 'Identity', label: 'Tinkerspace Calicut board', state: 'Mounted', action: 'Inspect board', detail: 'OSB identity board mounted on the large annex wall facing the covered lobby, at the marked reference location.', interact: () => 'TINKERSPACE CALICUT' });
   for (const cfg of c.objects.fans) {
     const fan = makeFan(parent, m, cfg);
     const item = registry.add({ id: cfg.id, group: fan.group, category: 'Ventilation', label: 'Wall fan', state: 'On', action: 'Switch fan off', detail: 'Wall-mounted fan with visible cage and rotating blades.',
@@ -106,12 +109,6 @@ export function buildInterior(parent, m, registry, collision) {
   box(network, m.black, [.26, .03, .19], [0, .22, 0]);
   for (const x of [-.1, .1]) beam(network, m.black, [x, .23, 0], [x, .49, -.045], .012);
   registry.add({ id: n.id, group: network, label: 'Network cabinet', category: 'Connectivity', state: 'Online · simulated', action: 'Inspect network', detail: 'One wall-mounted network cabinet above the printer-side shelf. Indicator state is simulated; there is no connection to real equipment.', interact: () => 'Network cabinet · simulated online status' });
-  // Confirmed bench electronics represented as one cluster, with a neutral pixel motif.
-  const eq = c.objects.workshopEquipment, tools = group(parent, eq.position, eq.rotationY, eq.id);
-  box(tools, m.blue, [.68, .49, .035], [0, .245, 0]);
-  for (let row = 0; row < 8; row++) for (let col = 0; col < 10; col++) if ((row + col) % 3 === 0) box(tools, m.indicator, [.04, .04, .01], [-.24 + col * .052, .055 + row * .052, .025]);
-  box(tools, m.steel, [.28, .07, .23], [.73, .04, 0]); cylinder(tools, m.silver, .035, .22, [.73, .15, 0]);
-  registry.add({ id: 'bench-equipment', group: tools, label: 'Electronics & bench tools', category: 'Workshop', state: 'Available', action: 'Inspect tools', detail: 'Pixel panel, small vise and electronics on the printer workbench. Fine component placement is approximate.', interact: () => 'Electronics and small bench tools' });
   // Hanging rectangles with crossbars, shared by two switch banks.
   const lampMat = new THREE.MeshBasicMaterial({ color: '#f3ffe6' }), lamps = group(parent);
   const lights = [];

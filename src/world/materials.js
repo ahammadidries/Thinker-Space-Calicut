@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { firstFloorPlan } from '../config/first-floor-plan.js';
 
 function texture(draw, size = 512) {
   const canvas = document.createElement('canvas'); canvas.width = canvas.height = size;
@@ -18,7 +19,7 @@ export function createMaterials() {
     c.fillStyle = '#c9c4b1'; c.fillRect(0, 0, s, s);
     for (let i = 0; i < 18000; i++) { c.fillStyle = rng() > .5 ? '#ffffff0b' : '#6556450c'; c.fillRect(rng() * s, rng() * s, 2, 2); }
     c.strokeStyle = '#8d8776'; c.lineWidth = 3; c.strokeRect(0, 0, s, s);
-  }); floorMap.repeat.set(5.8 / .6, 14.6 / .6);
+  }); floorMap.repeat.set(firstFloorPlan.dimensions.workshop[1] / .6, firstFloorPlan.dimensions.workshop[0] / .6);
   const annexMap = floorMap.clone(); annexMap.repeat.set(4, 3);
   const roofMap = texture((c, s) => {
     c.fillStyle = '#a96644'; c.fillRect(0, 0, s, s);

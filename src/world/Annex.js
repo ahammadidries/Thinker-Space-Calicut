@@ -2,8 +2,9 @@ import { sceneConfig } from '../config/scene-config.js';
 import { box, cylinder, group } from './primitives.js';
 
 export function buildAnnex(parent, m, collision, floor, solid) {
-  const c = sceneConfig, plan = c.plan, f = c.building.room.floorY, h = c.building.room.wallHeight, t = c.building.room.wallThickness;
-  for (const r of plan.rooms) floor(r.id, r.minX, r.maxX, r.minZ, r.maxZ, r.id === 'bathroom' ? m.bathroomFloor : r.id === 'entry-landing' ? m.veranda : m.annexFloor);
+  const c = sceneConfig, plan = c.plan, f = c.building.room.floorY, h = c.building.room.wallHeight, t = plan.annex.wallThickness ?? c.building.room.wallThickness;
+  const padding = plan.annex.floorPadding ?? t / 2;
+  for (const r of plan.rooms) floor(r.id, r.minX - padding, r.maxX + padding, r.minZ - padding, r.maxZ + padding, r.id === 'bathroom' ? m.bathroomFloor : r.id === 'entry-landing' ? m.veranda : m.annexFloor);
   const wall = (segment, height, y) => {
     const { a, b, id } = segment;
     solid(id, [Math.abs(a[0] - b[0]) || t, height, Math.abs(a[1] - b[1]) || t], [(a[0] + b[0]) / 2, y, (a[1] + b[1]) / 2]);

@@ -40,7 +40,7 @@ export class PlayerController {
   }
   location() {
     const p = this.position, b = sceneConfig.building, s = b.stairs, v = b.veranda;
-    if (p.y > b.room.floorY - .2) for (const r of [sceneConfig.plan.main, ...sceneConfig.plan.rooms]) if (containsPlanPoint(r, p.x, p.z)) return r.label;
+    if (p.y > b.room.floorY - .2) for (const r of [sceneConfig.plan.main, ...sceneConfig.plan.rooms, sceneConfig.plan.lobby, sceneConfig.plan.balcony]) if (containsPlanPoint(r, p.x, p.z)) return r.label;
     if (p.x > s.minX && p.x < s.maxX && p.z > s.topZ && p.z < s.bottomZ && p.y < b.room.floorY - .1) return 'Staircase';
     if (p.x > v.innerX && p.x < v.outerX && p.z > v.nearZ && p.z < v.farZ && p.y > b.room.floorY - .2) return 'Upper veranda';
     return p.z < -8 ? 'Uphill approach' : 'Garden & lower approach';

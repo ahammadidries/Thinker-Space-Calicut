@@ -1,10 +1,9 @@
 import { firstFloorPlan } from './first-floor-plan.js';
+import { createSiteLayout } from './site-layout.js';
 
-const floorY = 3.2;
+const floorY = firstFloorPlan.floorY;
 const tables = [
-  { id: 'table-01', position: [1.04, floorY, -3.82], width: 2.8, depth: 1.05, seats: { north: 3, south: 2 } },
-  { id: 'table-02', position: [.68, floorY, -1.36], width: 2.67, depth: 1.1, seats: { north: 1, south: 0 } },
-  { id: 'table-03', position: [.88, floorY, 1.26], width: 3, depth: 1.1, seats: { north: 3, south: 2 } },
+  ...[-4.05, -.8, 2.45].map((z, i) => ({ id: `table-0${i + 1}`, position: [.8, floorY, z], width: 2.9, depth: 1.1, seats: { north: 4, south: 4 } })),
   { id: 'window-table-01', position: [-2.02, floorY, 4.4], width: 1.38, depth: .84, seats: { north: 0, south: 1 } },
 ];
 // Seat centres derive from tables; local +Z is the chair back.
@@ -24,10 +23,10 @@ export function alignedTableChairs(table) {
 export const sceneConfig = {
   plan: firstFloorPlan,
   building: {
-    room: { width: 5.8, length: 14.6, floorY, wallHeight: 3.15, wallThickness: .16 },
-    veranda: { outerX: 6.9, innerX: 2.9, nearZ: -9.16, farZ: 9.5, entryPorchNearZ: -11.45 },
-    roof: { minX: -3.65, maxX: 7.55, minZ: -13.4, maxZ: 10.2, ridgeX: .35, eaveY: 6.4, ridgeY: 9.1, hipLength: 3.6, confidence: 'photo-based; extended over plan footprint' },
-    stairs: { minX: 4.65, maxX: 6.65, topZ: -3.5, bottomZ: 3.7, steps: 20, confidence: 'photo/video connection; not dimensioned on plan' },
+    room: { width: 5.406, length: 14.435, floorY, wallHeight: 3.15, wallThickness: firstFloorPlan.wallThickness },
+    veranda: { outerX: firstFloorPlan.lobby.maxX, innerX: 2.803, nearZ: firstFloorPlan.lobby.minZ, farZ: firstFloorPlan.balcony.maxZ, entryPorchNearZ: firstFloorPlan.lobby.minZ },
+    roof: { minX: -3.55, maxX: 7.52, minZ: -13.5, maxZ: 10.4, ridgeX: .35, eaveY: 6.95, ridgeY: 9.65, hipLength: 3.6, confidence: 'photo-based height above the PDF +3.75 m floor' },
+    stairs: { minX: 4.867, maxX: 6.667, topZ: -6.25, bottomZ: 1.85, steps: 25, landingNumber: 12, landingDepth: 1.08, confidence: 'Reference positions 1–11 and 13–25 are treads; 12 is the broad intermediate landing. Width, run and landing depth are traced estimates.' },
     doors: [
       { id: 'door-display-end', x: 2.9, z: -6.3, width: 1.36, height: 2.45, refs: ['First-floor plan', 'P6-P7'] },
       { id: 'door-printer-end', x: 2.9, z: 4.6, width: 1.36, height: 2.45, refs: ['First-floor plan', 'P4', 'P18'], note: 'Opening ends before the tall shelf.' },
@@ -42,9 +41,13 @@ export const sceneConfig = {
       { id: 'light-switch-2', position: [2.8, 4.4, 3.66], rotationY: -Math.PI / 2 },
     ],
     electricalOutlet: { id: 'electrical-switch-01', position: [2.8, 3.72, -5.38], rotationY: -Math.PI / 2 },
-    entranceSign: { id: 'sign-tinkerspace', position: [1.42, 4.68, -7.39], width: 1.28, height: 1.55, rotationY: 0, confidence: 'User-supplied sign image; mounted on the approach-facing landing wall.' },
-    workshopEquipment: { id: 'bench-equipment', position: [-1.4, 4.15, 6.82], rotationY: Math.PI, confidence: 'photo-established bench; approximate component positions' },
-    display: { id: 'display-01', position: [0, 5.23, -7.18], rotationY: 0, confidence: 'photo-established wall; adjusted to plan shell', refs: ['P1-P3', 'P6'] },
+    entranceSign: {
+      id: 'sign-tinkerspace',
+      position: [firstFloorPlan.annex.maxX + firstFloorPlan.annex.wallThickness / 2 + .025, floorY + 1.48, (firstFloorPlan.annex.minZ + firstFloorPlan.annex.bathroomTopZ) / 2],
+      width: 1.28, height: 1.55, rotationY: -Math.PI / 2,
+      confidence: 'User-marked location on the large annex wall facing the covered lobby.',
+    },
+    display: { id: 'display-01', position: [0, 5.23, -7.18], rotationY: 0, url: 'https://jasimcm.github.io/tinkerspace_digital_calicut/', refreshIntervalMs: 60_000, confidence: 'photo-established wall; adjusted to plan shell', refs: ['P1-P3', 'P6'] },
     workbench: { id: 'printer-workbench', position: [-.3, floorY, 6.84], width: 4.96, depth: .68, confidence: 'plan footprint; photo function' },
     printers: [
       { id: 'printer-01', position: [1.42, 4.15, 6.82], rotationY: Math.PI, confidence: 'same larger printer beside shelf', refs: ['P18', 'P19'] },
@@ -52,7 +55,7 @@ export const sceneConfig = {
     ],
     shelf: { id: 'tall-shelf-01', position: [2.53, floorY, 6.05], rotationY: -Math.PI / 2, confidence: 'plan rectangle beside lower door; photo identity' },
     network: { id: 'network-cabinet-01', position: [2.21, 5.92, 7.01], rotationY: Math.PI, confidence: 'photo-established printer corner' },
-    windowCabinet: { id: 'window-cabinet-01', position: [-2.46, floorY, -6.33], rotationY: Math.PI / 2, confidence: 'photo-established display-end window' },
+    windowCabinet: { id: 'window-cabinet-01', position: [-2.46, floorY, -6.0], rotationY: Math.PI / 2, width: 2.2, depth: .6, height: .9, doorCount: 3, confidence: 'User red annotation on TINKERSPACE.pdf confirms a three-door cabinet table beneath the windows at the TV end; exact dimensions estimated.', refs: ['P5', 'TINKERSPACE.pdf', 'User red-marked plan'] },
     tables,
     windowDesk: { id: 'window-desk-01', position: [-2.46, floorY, -1.05], width: .68, depth: 5.5, confidence: 'supplied floor plan' },
     fans: [-5.2, -.35, 5.18].flatMap((z, i) => [
@@ -69,7 +72,6 @@ export const sceneConfig = {
     ...Array.from({ length: 7 }, (_, i) => ({ id: 'chair-window-' + (i + 1), tableId: 'window-desk-01', side: 'east', position: [-1.69, floorY, -3.3 + i * .75], rotationY: Math.PI / 2 })),
     ...[2.15, 2.85, 3.55].map((z, i) => ({ id: 'chair-window-spare-' + (i + 1), position: [-2.38, floorY, z], rotationY: -Math.PI / 2 })),
     { id: 'chair-window-upper-spare', position: [-2.38, floorY, -4.48], rotationY: -Math.PI / 2 },
-    ...[1.35, 2.15].map((x, i) => ({ id: 'chair-east-spare-' + (i + 1), position: [x, floorY, 3.15], rotationY: 0 })),
     { id: 'chair-other-3-01', position: [-1.63, floorY, -12.06], rotationY: Math.PI },
     { id: 'chair-other-2-01', position: [.15, floorY, -12.06], rotationY: Math.PI },
     { id: 'chair-other-2-02', position: [.93, floorY, -12.06], rotationY: Math.PI },
@@ -77,7 +79,7 @@ export const sceneConfig = {
   ],
   uncertainty: {
     dimensions: firstFloorPlan.notes[0],
-    furniture: 'Table footprints follow the plan. Chair counts by group are retained; rows face their table. Loose seats stay in their wall zones.',
+    furniture: 'Three aligned 2.9 × 1.1 m shared tables, each with four chairs on both long sides, per the latest user correction. Other seats remain in their wall zones.',
     windows: 'Three left-wall window groups traced from plan. Opening widths are scaled estimates.',
     annex: 'Other 1/2/3 names and source area labels are retained; room functions are not invented.',
     vegetation: 'Planting and terrain are photo-based context, not surveyed.',
@@ -95,3 +97,35 @@ export const sceneConfig = {
     garden: { position: [9.5, 0, 12.5], yaw: .55, pitch: .03, label: 'Lower approach' },
   },
 };
+
+// Preserve physical furniture sizes while re-anchoring their centres to the PDF shell.
+const sx = sceneConfig.building.room.width / 5.8, sz = sceneConfig.building.room.length / 14.6;
+const anchor = item => {
+  if (!item.position) return;
+  item.position[0] *= sx; item.position[2] *= sz;
+  if (item.position[1] !== floorY) item.position[1] += floorY - 3.2;
+};
+// The entrance board is already positioned from the current annex wall dimensions.
+for (const item of Object.values(sceneConfig.objects).flat()) if (item !== sceneConfig.objects.entranceSign) anchor(item);
+// Electrical plates sit against the inside wall face, not at a scaled offset from it.
+for (const plate of [...sceneConfig.objects.lightSwitches, sceneConfig.objects.electricalOutlet]) plate.position[0] = sceneConfig.building.room.width / 2 - .0225;
+sceneConfig.objects.workbench.width = 4.56;
+// Seats along tables derive again from their unchanged tabletop sizes.
+sceneConfig.chairs = [
+  ...sceneConfig.objects.tables.flatMap(alignedTableChairs),
+  ...sceneConfig.chairs.filter(c => !sceneConfig.objects.tables.some(t => t.id === c.tableId)).map(c => { anchor(c); return c; }),
+];
+for (const [id, position] of [
+  ['chair-other-3-01',[-1.63,floorY,-12.1775]],
+  ['chair-other-2-01',[.15,floorY,-12.1775]],
+  ['chair-other-2-02',[.93,floorY,-12.1775]],
+]) sceneConfig.chairs.find(c => c.id === id).position = position;
+for (const door of sceneConfig.building.doors) { door.x = sceneConfig.building.veranda.innerX; door.z *= sz; }
+for (const window of sceneConfig.building.windows) window.z *= sz;
+sceneConfig.viewpoints.arrival.position = [3.8,floorY,-14.3];
+sceneConfig.viewpoints.workshop.position = [-.8,floorY,5.3];
+sceneConfig.viewpoints.veranda.position = [3.7,floorY,-5.2];
+sceneConfig.viewpoints.annex.position = [.6,floorY,-8.3175];
+sceneConfig.uncertainty.dimensions = firstFloorPlan.notes[0];
+sceneConfig.uncertainty.annex = 'Earlier bathroom and Other 1/2/3 layout restored at the user’s request; translated to meet the current workshop wall.';
+sceneConfig.site = createSiteLayout(firstFloorPlan, sceneConfig.building.stairs);

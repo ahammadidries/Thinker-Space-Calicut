@@ -18,19 +18,21 @@ const fs=require('node:fs');
       if (interior) for(const child of interior.children) if(child.type==='Group'&&!child.name) child.visible=false;
       t.scene.background=new THREE.Color('#ecefe7');
       t.scene.fog=null;
-      t.renderer.clippingPlanes=[new THREE.Plane(new THREE.Vector3(0,-1,0),4.45)];
+      const cutY=t.config.building.room.floorY+1.25;
+      t.renderer.clippingPlanes=[new THREE.Plane(new THREE.Vector3(0,-1,0),cutY)];
       t.renderer.shadowMap.enabled=false;
       // Cap cut walls so their cross-sections stay visible from above.
       const capMaterial=new THREE.MeshBasicMaterial({color:'#7e8474'});
-      const cap=(a,b)=>{
+      const cap=(a,b,thickness=t.config.building.room.wallThickness)=>{
         const length=Math.hypot(b[0]-a[0],b[1]-a[1]);
-        const mesh=new THREE.Mesh(new THREE.BoxGeometry(length,.02,.16),capMaterial);
-        mesh.position.set((a[0]+b[0])/2,4.435,(a[1]+b[1])/2);
+        const mesh=new THREE.Mesh(new THREE.BoxGeometry(length,.02,thickness),capMaterial);
+        mesh.position.set((a[0]+b[0])/2,cutY-.015,(a[1]+b[1])/2);
         mesh.rotation.y=-Math.atan2(b[1]-a[1],b[0]-a[0]);
         t.scene.add(mesh);
       };
-      const {plan,building}=t.config, r=plan.main;
-      for(const wall of plan.annexWalls) cap(wall.a,wall.b);
+      const {plan,building}=t.config, m=plan.main, half=building.room.wallThickness/2;
+      const r={minX:m.minX-half,maxX:m.maxX+half,minZ:m.minZ-half,maxZ:m.maxZ+half};
+      for(const wall of plan.annexWalls) cap(wall.a,wall.b,plan.annex.wallThickness);
       cap([r.minX,r.minZ],[r.maxX,r.minZ]);
       cap([r.minX,r.maxZ],[r.maxX,r.maxZ]);
       for(const [x,openings] of [[r.minX,building.windows],[r.maxX,building.doors]]){

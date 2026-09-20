@@ -1,0 +1,169 @@
+{
+  "asset": "space-host.glb",
+  "bytes": 1712808,
+  "triangles": 18424,
+  "bones": [
+    "Hips",
+    "Spine",
+    "Chest",
+    "Neck",
+    "Head",
+    "LeftUpperArm",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftThigh",
+    "LeftShin",
+    "LeftFoot",
+    "LeftToe",
+    "RightUpperArm",
+    "RightForeArm",
+    "RightHand",
+    "RightThigh",
+    "RightShin",
+    "RightFoot",
+    "RightToe"
+  ],
+  "clips": [
+    {
+      "name": "Idle",
+      "duration": 4
+    },
+    {
+      "name": "Breathing",
+      "duration": 5
+    },
+    {
+      "name": "Greeting",
+      "duration": 2.8
+    },
+    {
+      "name": "Talking",
+      "duration": 4
+    },
+    {
+      "name": "HeadTurn",
+      "duration": 4
+    },
+    {
+      "name": "LookAtVisitor",
+      "duration": 3
+    },
+    {
+      "name": "HandGesture",
+      "duration": 3
+    },
+    {
+      "name": "TurnLeft",
+      "duration": 3
+    },
+    {
+      "name": "TurnRight",
+      "duration": 3
+    }
+  ],
+  "meshes": [
+    {
+      "name": "HostSkinMesh",
+      "material": "HostSkin",
+      "triangles": 4840,
+      "vertices": 3122,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostHairMesh",
+      "material": "HostHair",
+      "triangles": 7640,
+      "vertices": 13166,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostShirtMesh",
+      "material": "HostShirt",
+      "triangles": 1176,
+      "vertices": 859,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostPantsMesh",
+      "material": "HostPants",
+      "triangles": 744,
+      "vertices": 490,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostShoesMesh",
+      "material": "HostShoes",
+      "triangles": 588,
+      "vertices": 398,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostTrimMesh",
+      "material": "HostTrim",
+      "triangles": 856,
+      "vertices": 793,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostEyesMesh",
+      "material": "HostEyes",
+      "triangles": 336,
+      "vertices": 234,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostEyeWhiteMesh",
+      "material": "HostEyeWhite",
+      "triangles": 448,
+      "vertices": 306,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostLipsMesh",
+      "material": "HostLips",
+      "triangles": 560,
+      "vertices": 388,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostDetailMesh",
+      "material": "HostDetail",
+      "triangles": 60,
+      "vertices": 100,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostBeardMesh",
+      "material": "HostBeard",
+      "triangles": 216,
+      "vertices": 168,
+      "skinned": true,
+      "uv": true
+    },
+    {
+      "name": "HostCurlMesh",
+      "material": "HostCurl",
+      "triangles": 960,
+      "vertices": 2880,
+      "skinned": true,
+      "uv": true
+    }
+  ],
+  "units": "metres",
+  "up": "+Y",
+  "forward": "+Z",
+  "editableMaterial": "HostShirt",
+  "textures": 0,
+  "identity": "Reference-informed original stylized likeness. Nameplate is separate UI.",
+  "generator": "tools/export-host.mjs"
+}

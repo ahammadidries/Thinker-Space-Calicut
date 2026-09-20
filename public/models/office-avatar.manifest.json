@@ -1,0 +1,105 @@
+{
+  "asset": "office-avatar.glb",
+  "bytes": 425420,
+  "triangles": 4464,
+  "bones": [
+    "Hips",
+    "Spine",
+    "Chest",
+    "Neck",
+    "Head",
+    "LeftUpperArm",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftThigh",
+    "LeftShin",
+    "LeftFoot",
+    "LeftToe",
+    "RightUpperArm",
+    "RightForeArm",
+    "RightHand",
+    "RightThigh",
+    "RightShin",
+    "RightFoot",
+    "RightToe"
+  ],
+  "clips": [
+    {
+      "name": "Idle",
+      "duration": 2
+    },
+    {
+      "name": "Walk",
+      "duration": 0.9
+    },
+    {
+      "name": "Sit",
+      "duration": 1
+    },
+    {
+      "name": "SittingIdle",
+      "duration": 2
+    },
+    {
+      "name": "GetUp",
+      "duration": 1
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Body",
+      "material": "SkinMaterial",
+      "triangles": 1664,
+      "vertices": 1275,
+      "skinned": true
+    },
+    {
+      "name": "Hair",
+      "material": "HairMaterial",
+      "triangles": 444,
+      "vertices": 1085,
+      "skinned": true
+    },
+    {
+      "name": "Shirt",
+      "material": "AvatarShirt",
+      "triangles": 628,
+      "vertices": 567,
+      "skinned": true
+    },
+    {
+      "name": "Pants",
+      "material": "PantsMaterial",
+      "triangles": 632,
+      "vertices": 619,
+      "skinned": true
+    },
+    {
+      "name": "Shoes",
+      "material": "ShoesMaterial",
+      "triangles": 252,
+      "vertices": 206,
+      "skinned": true
+    },
+    {
+      "name": "SolesAndBadge",
+      "material": "TrimMaterial",
+      "triangles": 440,
+      "vertices": 1054,
+      "skinned": true
+    },
+    {
+      "name": "FaceAndLanyard",
+      "material": "DetailMaterial",
+      "triangles": 404,
+      "vertices": 420,
+      "skinned": true
+    }
+  ],
+  "units": "metres",
+  "up": "+Y",
+  "forward": "+Z",
+  "seatHeight": 0.46,
+  "identity": "No name or personal data baked into asset",
+  "generator": "tools/export-avatar.mjs"
+}

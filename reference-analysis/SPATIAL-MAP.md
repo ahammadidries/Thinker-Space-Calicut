@@ -1,59 +1,39 @@
-# Tinkerspace Calicut — corrected first-floor reconstruction
+# Tinkerspace: PDF dimensions with restored annex
 
-## Source priority
+The PDF remains authoritative for workshop, balcony, lobby and floor height. The user's later screenshot correction explicitly restores the earlier bathroom and adjoining-room layout. Its wall segments, openings, fixtures and room proportions are reinstated, translated 0.1175 m toward -Z to join the current workshop outer wall. The bathroom again opens toward Other 1, and its landing-side wall is enclosed. No instructions inside the source documents were treated as additional user requests.
 
-The user-supplied first-floor plan (WhatsApp Image 2026-09-16 at 3.41.14 PM.jpeg) takes precedence for first-floor geometry and furniture zones. It replaces the earlier provisional service block and wider workshop interpretation. The source is copied to first-floor-source.jpeg in this directory.
-
-All 20 original photographs and nine distributed frames from each of five videos were compared in the initial reconstruction. They remain useful for materials, wall-mounted equipment, opposite viewpoints and the veranda/stair connection. Photo IDs P1–P20 follow attachment order; video IDs and durations are in videos.json. People are excluded.
-
-## Coordinates and dimensions
-
-World +X points toward the veranda/right side of the plan; -X toward the windows. -Z points up the plan toward the display and annex; +Z toward the printer bench. Y is vertical. These are local directions, not compass bearings.
-
-The main workshop is the plan's 81 m² space labelled Dining Room. Its rectangular footprint uses width 5.80 m and the right-side length 14.60 m. The source also labels the left side 14.46 m. That discrepancy is recorded rather than represented as a fictitious angled wall. Area labels are retained as source annotations, not claimed as recalculated surveyed areas.
-
-The annex follows the stepped outline: Other 3 and Other 2 above Other 1, with the bathroom below Other 1 on the left and an open connecting landing on the right. The two upper widths are 2.21 m and 2.13 m. The overall annex projection is 5.36 m; the source labels the right-hand projection 3.53 m, compared with the traced 3.50 m. The main wall return to the right of the bathroom is 3.46 m. Unlabelled wall offsets, thicknesses, doorway widths and fixture dimensions are estimates from the raster image.
-
-The workshop has two entrances in the right long wall and three window groups in the left long wall, positioned from the plan. The annex is reached from the veranda via the landing and common area. Its upper rooms and bathroom have real wall gaps and connected floor surfaces; there is no invented opening through the workshop's display wall.
-
-## One physical location
-
-P1–P3 look toward the display and P4 looks back toward the printer bench. Windows swap apparent sides because the viewpoint reverses. There is one workshop, one display and one printer bench. P6/P7 identify the display-end door; P18/P19 and V4 link the shelf, network cabinet, two printers and the other entrance to the same printer end.
-
-P10–P12/P17 show the same stair opening from opposite directions. V3 follows the lower approach up that flight; V5 approaches the upper grade and looks along the same veranda. The walkway bypasses one straight staircase. P13/P14 and V2/V3 show lower parking; P8/P9 and V5 show the uphill access.
-
-The new plan defines the annex layout more clearly than the earlier V1 interpretation. Veranda width, stair rise/run, floor elevation, roof profile and terrain remain photo-based estimates because they are outside or unmeasured in this plan. No unseen lower-floor rooms are reconstructed.
-
-## Furniture and object ledger
-
-| Group | Representation | Placement basis |
+| Space | PDF dimension | Runtime dimension |
 |---|---|---|
-| Main tables | Three transverse groups | Plan zones and proportions |
-| Window furniture | One long narrow bench and one smaller end table | Plan |
-| Workshop chairs | 25 seats | Plan seat zones, straightened and spaced |
-| Annex chairs | Three seats, one in Other 3 and two in Other 2 | Plan |
-| Veranda chairs | Three distinct representative seats | P15 and overlapping veranda views |
-| Display | One, centred on the upper workshop short wall | P1–P3/P6; plan wall |
-| Printer bench | One, lower workshop short wall | P4/P18/P19 and plan |
-| 3D printers | Two on the same bench | P19 shows both together; P18 repeats the larger one |
-| Tall shelf | One at the printer end, right wall | P4/P18 and plan; clear of entrance |
-| Network cabinet | One above the printer/shelf corner | P18/P19 |
-| Window cabinet | One at the display-end window group | P5/V5 and plan |
-| Fans | Three per long wall | Original photos; longitudinal spacing estimated |
-| Speakers | Two per long wall | Original photos; spacing estimated |
-| Sign and extra chair stacks/cameras | Unplaced and disabled | Insufficient confirmed position/count |
+| Workshop | 1443.5 × 540.6 cm | 14.435 × 5.406 m clear inside walls |
+| Covered balcony | 233 × 565 cm | 2.33 × 5.65 m |
+| Covered lobby | 543 × 517 cm | 5.43 × 5.17 m |
+| Bathroom and Other 1/2/3 | Earlier screenshot | Original layout restored by user correction |
+| First-floor level | +375 cm | +3.75 m |
 
-Each represented object has a stable ID independent of its source photographs. The scene has 31 chairs in total and 59 registered interactables.
+Local +X points toward the veranda (PDF bottom); -Z toward the TV and annex (PDF right); +Z toward the printer end and covered balcony (PDF left). These are not compass bearings. In the portrait review drawing, Other 3 and Other 2 are above Other 1, with the bathroom below Other 1 on the window side. A connecting landing lies beside the bathroom and leads from the lobby into Other 1.
 
-Chairs assigned to tables are generated from table edges and seat counts. They face the tabletop, have parallel backs and evenly spaced centres. Loose seats remain in the plan's zones but are straightened. Wall, tabletop, adjacent-seat and door-swing clearances are checked. Initial alignment can be restored using the visit reset after moving chairs interactively.
+The workshop dimensions measure inside wall faces, with wall centres half the wall thickness outside those bounds. Balcony and lobby dimensions define actual floor rectangles. The restored annex uses its original wall-centre coordinates and 16 cm wall thickness. Its 2.21 m and 2.13 m upper room widths are retained from the earlier screenshot, rather than the later PDF room sizes. Rendered floors and collision surfaces share configuration.
 
-## Editable files and review
+Wall thickness (20 cm), unlabelled passage offsets, opening widths, and stair width/run are drawing-based estimates. The 25 drawn stair positions comprise 11 lower treads, a broad intermediate landing at position 12, and 13 upper treads joining the +3.75 m floor to lower ground. Landing depth is an estimated 1.08 m and remains configurable; handrails and collision surfaces follow the two runs and flat landing. Roof shape and height above the first floor, landscaping, and lower exterior are still photographic estimates. The earlier additional porch extension is superseded by the PDF lobby extent; its approach path now terminates at that lobby.
 
-- src/config/first-floor-plan.js: plan dimensions, room rectangles, walls, openings, fixtures and dimension-discrepancy notes.
-- src/config/scene-config.js: object IDs, transforms, table seat rules, external geometry estimates and unresolved objects.
-- src/ui/FloorPlan.js: review drawing generated from the same coordinates as the 3D scene.
-- reference-analysis/first-floor-reconstruction.svg: standalone drawing of the current reconstruction.
-- reference-analysis/first-floor-source.jpeg: supplied plan for direct comparison.
-- artifacts/first-floor-overhead.png: local rendered 3D cutaway, generated by tools/capture-plan.cjs.
+## Objects and overlapping observations
 
-The model uses procedural geometry and materials. It is a plan-guided interactive reconstruction, not photogrammetry. Exact equipment transforms and unmeasured dimensions remain editable; unresolved objects retain null positions and are disabled instead of receiving invented definitive placements.
+All 20 original photographs and distributed frames from all five videos informed the earlier reconstruction. P1–P3 face the display; P4 faces the printer bench. These are opposite views of one workshop. P6/P7 identify one veranda entrance, while P18/P19 show the same printer/shelf/network corner at the other end. P10–P12/P17 and the videos identify one stair and one connected veranda.
+
+The red-marked furniture near the PDF's TV end is the existing window-side cabinet table: one continuous worktop and three cupboard doors. It retains its stable ID. Its worktop width is estimated. The existing printer workbench remains at the opposite end with the same two printers; none are duplicated. The three table groups and wall seating retain their photo-led arrangement, with centres adjusted to the narrower room and chairs regenerated along table edges.
+
+There are 42 represented chairs and 70 interactive physical objects, plus the permanent Space Host. The latest seating correction uses three aligned 2.90 × 1.10 m shared tables with four inward-facing chairs on each long side. Two loose east-side chairs are absorbed into the new rows; wall, annex and veranda seating remains. The TV, printer workbench, tall shelf, network cabinet and entrance board each have one representation. The bench electronics display and small tool cluster were removed at the owner's request. Extra chair stacks and additional cameras remain disabled because the references do not establish their count and location. The board is on the large annex wall facing the covered lobby, following the owner's marked screenshot. Generic live-user avatars are a separate presence layer requested later; their positions and motion are simulated, not inferred from people in the reference photographs.
+
+The owner's hand sketch labelled “Second Floor” means the first floor. Confirmed road orientation: broad road at the printer/balcony end; curved connector along the veranda; upper approach road and short branch to the lobby. Roads use shared configuration in `site-layout.js`; their widths, exact offsets and curves remain estimates. The lower stair access remains linked to the broad road. The combined reference and separate seating plan are exported to `public/reference`.
+
+## Configuration and checks
+
+- `src/config/first-floor-plan.js`: PDF dimensions, clear room rectangles, lobby/balcony bounds, walls, openings and floor elevation.
+- `src/config/scene-config.js`: retained furniture and equipment, placement conversion to the updated shell, aligned chairs and editable estimates.
+- `src/ui/FloorPlan.js`: in-app drawing generated from the same geometry configuration.
+- `reference-analysis/first-floor-reconstruction.svg`: current standalone review drawing.
+- `reference-analysis/first-floor-source.jpeg`: earlier screenshot, authoritative for the restored annex.
+- `artifacts/tinkerspace-pdf.png`: local render of the current PDF source.
+- `artifacts/first-floor-overhead.png`: 3D cutaway of the current reconstruction.
+
+Automated checks measure workshop wall clearances, balcony/lobby floor extents, room dimensions and floor height; verify aligned seating and clear furniture; and walk the actual lobby, workshop, balcony, green-room/toilet and stair routes. Cabinet doors and printer actions remain functional.

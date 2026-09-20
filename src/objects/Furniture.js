@@ -24,17 +24,22 @@ export function makeChair(parent, m, cfg) {
   return g;
 }
 export function makeCabinet(parent, m, cfg, width = 1.45) {
+  width = cfg.width ?? width;
+  const depth = cfg.depth ?? .55, height = cfg.height ?? .84, doorCount = cfg.doorCount ?? 2;
   const g = group(parent, cfg.position, cfg.rotationY || 0, cfg.id);
-  for (const x of [-width / 2, width / 2]) box(g, m.wood, [.05, .84, .52], [x, .42, 0]);
-  for (const y of [.04, .81]) box(g, m.wood, [width, .055, .55], [0, y, 0]);
-  box(g, m.wood, [width, .77, .035], [0, .42, -.25]);
-  box(g, m.wood, [width - .1, .03, .48], [0, .42, 0]);
+  for (const x of [-width / 2 + .025, width / 2 - .025]) box(g, m.wood, [.05, height - .06, depth - .06], [x, (height - .06) / 2, 0]);
+  box(g, m.wood, [width, .06, depth], [0, height - .03, 0], 'cabinet-table-worktop');
+  box(g, m.wood, [width - .06, .045, depth - .06], [0, .045, 0]);
+  box(g, m.wood, [width - .06, height - .12, .035], [0, height / 2, -depth / 2 + .025]);
+  box(g, m.wood, [width - .1, .03, depth - .08], [0, height / 2, 0]);
   const panels = [];
-  for (const side of [-1, 1]) {
-    const pivot = group(g, [side * width / 2, 0, .28]);
-    box(pivot, m.wood, [width / 2 - .02, .72, .04], [-side * width / 4, .43, 0]);
-    cylinder(pivot, m.silver, .014, .025, [-side * (width / 2 - .1), .44, .04], 8).rotation.x = Math.PI / 2;
-    panels.push({ pivot, side });
+  const leafWidth = (width - .08) / doorCount;
+  for (let index = 0; index < doorCount; index++) {
+    const pivot = group(g, [-width / 2 + .04 + index * leafWidth, 0, depth / 2 - .03], 0, 'cabinet-door-' + (index + 1));
+    box(pivot, m.wood, [leafWidth - .018, height - .16, .035], [leafWidth / 2, height / 2 - .015, 0]);
+    box(pivot, m.silver, [.018, .12, .025], [leafWidth - .08, height * .57, .035]);
+    if (index > 0) box(g, m.wood, [.03, height - .12, depth - .08], [-width / 2 + .04 + index * leafWidth, height / 2, -.015]);
+    panels.push({ pivot, side: -1, index });
   }
   return { group: g, panels };
 }
