@@ -78,8 +78,8 @@ export function buildInterior(parent, m, registry, collision) {
   box(tv, m.black, [1.67, .97, .075]);
   const screen = makeLiveDisplay(tv, tvCfg);
   beam(tv, m.black, [0, -.49, 0], [.05, -.99, -.02], .007);
-  const tvItem = registry.add({ id: tvCfg.id, group: tv, category: 'Display', label: 'Workshop live display', state: 'On', action: 'View live screen · R power', detail: 'Live website from jasimcm.github.io/tinkerspace_digital_calicut/. Press E to view and click the screen if the website asks to start. Live data updates automatically; new website versions are checked every minute.',
-    interact() { if (tvItem.state === 'Off') tvItem.rotate(); window.dispatchEvent(new Event('view-live-tv')); return 'Click the TV to activate the website if prompted.'; },
+  const tvItem = registry.add({ id: tvCfg.id, group: tv, category: 'Display', label: 'Workshop live display', state: 'On', action: 'View live screen · R power', detail: 'Live website from jasimcm.github.io/tinkerspace_digital_calicut/. Press E to view. Live data updates automatically; new website versions are checked every minute.',
+    interact() { if (tvItem.state === 'Off') tvItem.rotate(); window.dispatchEvent(new Event('view-live-tv')); return 'Viewing the live display.'; },
     rotate() { const on = tvItem.state !== 'On'; tvItem.state = on ? 'On' : 'Off'; screen.setPowered(on); return `Display ${on ? 'on' : 'off'}`; },
     update() { screen.update(); },
   });

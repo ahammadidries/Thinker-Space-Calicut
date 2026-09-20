@@ -7,7 +7,8 @@ export function roadHeight(road,x,z) {
   return (road.level==='lower'?0:terrainHeight(x,z))+road.surfaceOffset;
 }
 
-export function buildSiteRoads(parent,m,collision,roads) {
+export function buildSiteRoads(parent,m,collision,roads,openAreas=[]) {
+  const joinsPaving=(x,z)=>openAreas.some(r=>x>=r.minX-.15&&x<=r.maxX+.15&&z>=r.minZ-.15&&z<=r.maxZ+.15);
   for(const road of roads) {
     const vertices=[],uv=[],indices=[],edges=[[],[]],p=road.samples;
     for(let i=0;i<p.length;i++) {
@@ -24,7 +25,7 @@ export function buildSiteRoads(parent,m,collision,roads) {
     for(const edge of edges)for(let i=1;i<edge.length;i++) {
       const a=edge[i-1],b=edge[i];
       // Leave every junction open; curb strips must not cut across connecting roads.
-      if(onSiteRoad(a[0],a[2],roads,.15,road)||onSiteRoad(b[0],b[2],roads,.15,road))continue;
+      if(onSiteRoad(a[0],a[2],roads,.15,road)||onSiteRoad(b[0],b[2],roads,.15,road)||joinsPaving(a[0],a[2])||joinsPaving(b[0],b[2]))continue;
       beam(parent,m.curb,[a[0],a[1]+.035,a[2]],[b[0],b[1]+.035,b[2]],.1,.13);
     }
     const xs=p.map(v=>v[0]),zs=p.map(v=>v[1]),half=road.width/2;

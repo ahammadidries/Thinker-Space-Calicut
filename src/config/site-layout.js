@@ -10,13 +10,20 @@ export function createSiteLayout(plan, stairs) {
     { id: 'upper-road', label: 'Upper approach road', width: 3.2, points: [[-8,-18],[0,-18],[7.5,-18],[12,-19],[18,-23]] },
     { id: 'lobby-branch', label: 'First-floor entrance', width: 2.5, points: [[3.8,plan.lobby.minZ],[3.8,-14.3],[4.6,-16.3],[4.8,-18]] },
     { id: 'lower-walk', label: 'Lower stair access', width: 2.6, level: 'lower', points: [[5.767,16],[5.767,11],[5.767,6],[(stairs.minX+stairs.maxX)/2,stairs.bottomZ+.3]] },
+    { id: 'balcony-front-road', label: 'Road beside balcony parking', width: 3.5, points: [[-17,11.5],[-4,11.5],[5,11.5],[11.8,11.5]] },
   ];
   for (const [index, road] of roads.entries()) {
     const curve = new CatmullRomCurve3(road.points.map(([x,z]) => new Vector3(x,0,z)));
     road.samples = curve.getPoints(120).map(p => [p.x,p.z]);
     road.surfaceOffset = .025 + index * .002;
   }
-  return { roads, note: 'Road connections follow the owner’s sketch; road widths, offsets and curves are indicative.' };
+  const parking = {
+    id: 'balcony-parking', label: 'Covered bike parking below balcony',
+    minX: plan.balcony.minX, maxX: plan.balcony.maxX, minZ: plan.balcony.minZ, maxZ: plan.balcony.maxZ,
+    height: .015,
+    bikes: [7.91,8.60,9.29].map((z,i)=>({id:`parked-bike-${i+1}`,position:[-1.65,.015,z],rotationY:Math.PI/2})),
+  };
+  return { roads, parking, note: 'Road connections follow the owner’s sketch; road widths, offsets and curves are indicative. The marked strip is paved road and bike parking is underneath the balcony.' };
 }
 
 export function distanceToRoad(x,z,road) {

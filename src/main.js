@@ -53,7 +53,7 @@ try {
   renderer.domElement.addEventListener('click', () => { if (player.active && interaction.target?.id === 'space-host') interaction.act(player); });
   const tvControls = document.createElement('div');
   tvControls.id = 'tv-controls'; tvControls.hidden = true;
-  const tvHint = document.createElement('span'); tvHint.textContent = 'Click the screen or press Enter to start.';
+  const tvHint = document.createElement('span'); tvHint.textContent = 'Live display · updates automatically';
   const tvLink = document.createElement('a'); tvLink.textContent = 'Open source website ↗'; tvLink.href = sceneConfig.objects.display.url; tvLink.target = '_blank'; tvLink.rel = 'noopener noreferrer';
   const tvBack = document.createElement('button'); tvBack.textContent = 'Back to exploration';
   tvControls.append(tvHint, tvLink, tvBack); document.body.append(tvControls);

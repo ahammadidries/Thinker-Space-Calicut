@@ -3,11 +3,12 @@ const fs=require('node:fs');
 (async()=>{
  const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--enable-webgl','--ignore-gpu-blocklist','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  try{
-  const page=await browser.newPage({viewport:{width:2000,height:1240},deviceScaleFactor:1.5}),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error(e.message)});page.on('console',msg=>{if(msg.type()==='error')console.error(msg.text())});
+  const page=await browser.newPage({viewport:{width:2000,height:1240},deviceScaleFactor:1}),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error(e.message)});page.on('console',msg=>{if(msg.type()==='error')console.error(msg.text())});
   await page.goto('http://127.0.0.1:5186/reference/first-floor-site-reference.svg');
   await page.screenshot({path:'public/reference/first-floor-site-reference.png'});
   await page.setViewportSize({width:840,height:1700});await page.goto('http://127.0.0.1:5186/reference/first-floor-seating.svg');
   await page.screenshot({path:'public/reference/first-floor-seating.png'});
+  if(process.argv.includes('--images-only'))return;
   await page.setViewportSize({width:1200,height:900});
   await page.route('https://app-api.tinkerhub.org/checkin/active?*',r=>r.fulfill({contentType:'application/json',body:'[]'}));
   await page.route('https://jasimcm.github.io/**',r=>r.fulfill({contentType:'text/html',body:'<body>Live display</body>'}));
@@ -30,6 +31,8 @@ const fs=require('node:fs');
    return {counts,floors,totalChairs:t.config.chairs.length,aislesClear:true};
   });
   await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));await page.screenshot({path:'artifacts/aligned-shared-tables.png'});
+  await page.evaluate(()=>{const t=__twin;t.player.position.set(9,0,15);t.camera.position.set(9,2.1,15);t.camera.lookAt(-.4,2.4,6);});
+  await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));await page.screenshot({path:'artifacts/balcony-parking-corrected.png'});
   const overhead=await page.evaluate(async()=>{
    const THREE=await import('/node_modules/three/build/three.module.js'),t=__twin;
    t.renderer.setAnimationLoop(null);

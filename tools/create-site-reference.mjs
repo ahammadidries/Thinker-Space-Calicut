@@ -21,15 +21,18 @@ ${text(1480,239,'02 / FIRST-FLOOR SEATING',21,'#294238','font-weight="700" lette
 ${text(1480,272,'Four chairs on each side of each shared table.',17,'#667266')}
 <g clip-path="url(#site-clip)"><rect x="70" y="282" width="1336" height="810" fill="#e5ebdc"/>`;
 for(const road of c.site.roads)svg+=`<path d="${path(road)}" fill="none" stroke="#b4775a" stroke-width="${road.width*23+5}" stroke-linecap="butt" stroke-linejoin="round"/>`;
-for(const road of c.site.roads)svg+=`<path d="${path(road)}" fill="none" stroke="${road.level==='lower'?'#d7ccba':'#c7b9a2'}" stroke-width="${road.width*23}" stroke-linecap="butt" stroke-linejoin="round"/>`;
+for(const road of c.site.roads)svg+=`<path d="${path(road)}" fill="none" stroke="#c7b9a2" stroke-width="${road.width*23}" stroke-linecap="butt" stroke-linejoin="round"/>`;
 svg+=area({minX:c.building.veranda.innerX,maxX:c.building.veranda.outerX,minZ:c.building.veranda.nearZ,maxZ:c.building.veranda.farZ},'#c9d5bb');
 for(const r of [c.plan.balcony,c.plan.lobby])svg+=area(r,'#d6dfca');
 for(const r of c.plan.rooms)svg+=area(r,r.id==='bathroom'?'#dce8e6':'#eae5d6');
 svg+=area(c.plan.main,'#eae5d6','#394d42');
+svg+=area(c.site.parking,'#ddd4bf','#89937f');
+for(const bike of c.site.parking.bikes)svg+=`<g transform="translate(${sx(bike.position[2])},${sy(bike.position[0])})" fill="#516452"><rect x="-3" y="-15" width="6" height="30" rx="3"/><path d="M-7 -10H7M-5 6H5" stroke="#516452" stroke-width="3"/><rect x="-5" y="-2" width="10" height="12" rx="2"/></g>`;
 const s=c.building.stairs;svg+=area({minX:s.minX,maxX:s.maxX,minZ:s.topZ,maxZ:s.bottomZ},'#adbaa1');
 for(const step of createStairLayout(s,c.building.room.floorY).segments)svg+=`<path d="M${sx(step.minZ)},${sy(s.minX)}V${sy(s.maxX)}" stroke="#788b70" stroke-width="1"/>`;
 svg+=text(740,555,'FIRST FLOOR',25,'#294238','text-anchor="middle" font-weight="700"')+text(740,584,'Workshop · +3.75 m',18,'#667266','text-anchor="middle"');
-svg+=text(542,562,'BALCONY',12,'#566b4c','text-anchor="middle" transform="rotate(-90 542 562)"');
+svg+='<path d="M651 440H548V493" stroke="#62785a" fill="none" stroke-width="2"/><circle cx="548" cy="493" r="5" fill="#62785a"/>';
+svg+='<rect x="563" y="358" width="425" height="82" rx="12" fill="#fafaf4"/>'+text(775,390,'BALCONY ABOVE · PARKING BELOW',18,'#294238','text-anchor="middle" font-weight="700"')+text(775,418,'Bikes along the bamboo-side edge',17,'#667266','text-anchor="middle"');
 svg+=text(974,655,'LOBBY',16,'#566b4c','text-anchor="middle"')+text(738,653,'VERANDA',14,'#566b4c','text-anchor="middle" letter-spacing="3"');
 svg+=text(371,450,'MAIN ROAD',25,'#615747','text-anchor="middle" font-weight="700" transform="rotate(-90 371 450)"');
 svg+=text(757,845,'CURVED VERANDA-SIDE ROAD',20,'#615747','text-anchor="middle" font-weight="700"');
@@ -38,7 +41,7 @@ svg+='<path d="M1167 339L1154 388" stroke="#8d957d" fill="none" stroke-width="2"
 svg+='<path d="M1095 497V583L1088 657" stroke="#62785a" fill="none" stroke-width="2"/><circle cx="1088" cy="657" r="5" fill="#62785a"/>';
 svg+='<rect x="1020" y="434" width="310" height="64" rx="12" fill="#fafaf4"/>'+text(1175,461,'FIRST-FLOOR ENTRANCE',17,'#294238','text-anchor="middle" font-weight="700"')+text(1175,485,'Short branch from the upper road',16,'#667266','text-anchor="middle"');
 svg+='<path d="M490 749L467 694" stroke="#8d957d" fill="none" stroke-width="2"/>'+text(490,774,'Lower stair access',17,'#667266','text-anchor="middle"');
-svg+=text(760,991,'Road direction matches your hand-drawn sketch.',20,'#667266','text-anchor="middle"')+text(760,1022,'“Second Floor” in the sketch is labelled First Floor here.',18,'#667266','text-anchor="middle"');
+svg+=text(830,991,'The marked strip is road, continuing to the balcony edge.',20,'#667266','text-anchor="middle"')+text(830,1022,'Parking is at ground level underneath the first-floor balcony.',18,'#667266','text-anchor="middle"');
 svg+='</g>';
 const plan=createFloorPlan(c).svg.replace(/<circle id="map-marker"[^>]*\/>/,'');
 svg+=plan.replace('<svg ','<svg x="1490" y="290" width="425" height="808" ');

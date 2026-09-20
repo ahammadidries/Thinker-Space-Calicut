@@ -2,9 +2,10 @@ import * as THREE from 'three';
 import { sceneConfig } from '../config/scene-config.js';
 import { terrainHeight, baseGroundHeight } from '../game/CollisionWorld.js';
 import { seededRandom } from './materials.js';
-import { box, cylinder, beam, group, sphere } from './primitives.js';
+import { box, cylinder, beam } from './primitives.js';
 import { buildSiteRoads } from './SiteRoads.js';
 import { onSiteRoad } from '../config/site-layout.js';
+import { buildParking } from './Parking.js';
 
 export function buildExterior(parent, m, collision) {
   const rng = seededRandom(100);
@@ -15,8 +16,8 @@ export function buildExterior(parent, m, collision) {
     positions.setY(i, baseGroundHeight(x, z) - .06);
   }
   ground.computeVertexNormals(); const terrain = new THREE.Mesh(ground, m.soil); terrain.receiveShadow = true; parent.add(terrain);
-  buildSiteRoads(parent, m, collision, sceneConfig.site.roads);
-  box(parent, m.path, [11, .08, 4], [1.6, -.01, 10.7]);
+  buildSiteRoads(parent, m, collision, sceneConfig.site.roads, [sceneConfig.site.parking]);
+  buildParking(parent, m, collision, sceneConfig.site.parking);
   box(parent, m.veranda, [2.3, .06, 1.1], [5.767, -.02, sceneConfig.building.stairs.bottomZ + .5]);
   // Repeated foliage uses shared geometry and instancing.
   const trunkMatrices = [], leafMatrices = [], leafColors = [], grassMatrices = [];
@@ -41,18 +42,11 @@ export function buildExterior(parent, m, collision) {
   instance(new THREE.ConeGeometry(.5, 1, 5), m.moss, grassMatrices);
   // Slender bamboo cluster at the downhill end, observed in the exterior views.
   for (let i = 0; i < 23; i++) {
-    const x = -5.8 + rng() * 2, z = 9.5 + rng() * 3, height = 5 + rng() * 4;
-    beam(parent, m.moss, [x, 0, z], [x - rng() * 1.8, height, z + rng()], .045);
+    const x = -4.5 + rng() * 1.2, z = 7.1 + rng() * 2.1, height = 5 + rng() * 4;
+    beam(parent, m.moss, [x, 0, z], [x - rng() * 1.8, height, z - rng()], .045);
   }
   for (const [x, z] of [[14.1, -10], [14.1, -2], [14.1, 8]]) {
     const y = terrainHeight(x, z); cylinder(parent, m.steel, .055, 3.3, [x, y + 1.65, z]);
     cylinder(parent, m.concrete, .35, .055, [x, y + 3.3, z], 24); cylinder(parent, m.led, .23, .025, [x, y + 3.25, z], 20);
-  }
-  // Three motorcycles visible together below the far veranda. Stylized proxies.
-  for (let i = 0; i < 3; i++) {
-    const g = group(parent, [-2.8 + i * 1.25, 0, 9.4], .15);
-    for (const z of [-.53, .53]) { const wheel = cylinder(g, m.rubber, .26, .13, [0, .28, z], 16); wheel.rotation.z = Math.PI / 2; const hub = cylinder(g, m.silver, .14, .14, [0, .28, z], 12); hub.rotation.z = Math.PI / 2; }
-    beam(g, m.steel, [0, .3, -.55], [0, .85, -.28], .08); beam(g, m.steel, [0, .32, .5], [0, .61, -.3], .1);
-    box(g, i === 0 ? m.red : m.black, [.34, .28, .45], [0, .67, -.05]); box(g, m.black, [.35, .13, .55], [0, .8, .34]); beam(g, m.steel, [-.3, .99, -.35], [.3, .99, -.35], .03);
   }
 }
